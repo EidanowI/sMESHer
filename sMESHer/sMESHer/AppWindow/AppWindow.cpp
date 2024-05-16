@@ -1,6 +1,6 @@
 #include "AppWindow.h"
-
-
+#include <string>
+#include "../Renderer/Renderer.h"
 
 HINSTANCE AppWindow::s_hInstance = nullptr;
 HWND AppWindow::s_hWnd = nullptr;
@@ -81,6 +81,27 @@ LRESULT WindowProcess(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	case WM_CLOSE:
 	{
 		PostQuitMessage(0);
+		break;
+	}
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	{
+		if (!(lParam & 0b01000000000000000000000000000000)) {//30 bit is 1 if key was pressed before this message
+			OutputDebugString(L"\n\n");
+			OutputDebugString(std::to_wstring((unsigned char)wParam).c_str());
+			
+			if ((unsigned char)wParam == 81) {
+				Renderer::Render();
+			}
+			//if ((unsigned char)wParam == '[') {
+				//ShowWindow(AppWindow::s_hWnd, SW_MINIMIZE);
+				//AppWindow::
+				//AppWindow::
+			//}
+			//std::cout << (unsigned char)wParam;
+			//InputSystem::S_ppFunction_ONCE_KEY[(unsigned char)wParam](lParam);
+			//InputSystem::AddPressedKey((unsigned char)wParam, lParam);
+		}
 		break;
 	}
 	}
