@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -117,6 +117,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);assimp-vc140-mt.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)sMESHer/Dependencies/assimp;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,19 +137,313 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);assimp-vc140-mt.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)sMESHer/Dependencies/assimp;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow\AppWindow.cpp" />
+    <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="Dependencies\imGUI\imgui.cpp" />
+    <ClCompile Include="Dependencies\imGUI\imgui_demo.cpp" />
+    <ClCompile Include="Dependencies\imGUI\imgui_draw.cpp" />
+    <ClCompile Include="Dependencies\imGUI\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Dependencies\imGUI\imgui_impl_win32.cpp" />
+    <ClCompile Include="Dependencies\imGUI\imgui_tables.cpp" />
+    <ClCompile Include="Dependencies\imGUI\imgui_widgets.cpp" />
+    <ClCompile Include="Dependencies\PNGLoader\lodepng.cpp" />
+    <ClCompile Include="ImGuiManager\ImGUIManager.cpp" />
+    <ClCompile Include="InputSystem\InputSystem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mesh\Mesh.cpp" />
+    <ClCompile Include="Mesh\Model.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="ShaderSystem\ShaderSystem.cpp" />
+    <ClCompile Include="Transform\Transform.cpp" />
+    <ClCompile Include="Utils\GraphicsFundamentals.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="AppWindow\AppWindow.h" />
-    <ClInclude Include="hi.h" />
+    <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\3DSExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\3DSHelper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\3DSLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ACLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ai_assert.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\anim.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ASELoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ASEParser.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\AssbinExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\AssbinLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\assbin_chunks.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\AssxmlExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\B3DImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BaseImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BaseProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Bitmap.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlenderBMesh.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlenderDNA.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlenderIntermediate.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlenderLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlenderModifier.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlenderScene.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlenderSceneGen.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlenderTessellator.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlobIOSystem.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BVHLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ByteSwapper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\C4DImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\CalcTangentsProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\camera.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\cexport.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\cfileio.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\cimport.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\CInterfaceIOWrapper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\COBLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\COBScene.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ColladaExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ColladaHelper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ColladaLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ColladaParser.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\color4.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\pushpack1.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ComputeUVMappingProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\config.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ConvertToLHProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\CSMLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\D3MFImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\D3MFOpcPackage.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DeboneProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultIOStream.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultIOSystem.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultLogger.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultProgressHandler.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Defines.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\defs.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DXFHelper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DXFLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Exceptional.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Exporter.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\fast_atof.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXCompileConfig.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXConverter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXDocument.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXDocumentUtil.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXImportSettings.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXMeshGeometry.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXParser.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXProperties.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXTokenizer.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FBXUtil.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FileLogStream.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FileSystemFilter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FindDegenerates.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FindInstancesProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FindInvalidDataProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\FixNormalsStep.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\GenericProperty.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\GenFaceNormalsProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\GenVertexNormalsProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\glTFAsset.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\glTFAssetWriter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\glTFExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\glTFImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\HalfLifeFileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Hash.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\HMPFileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\HMPLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IFCLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IFCReaderGen.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IFCUtil.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IFF.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Importer.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Importer.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\importerdesc.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ImproveCacheLocality.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IOStream.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IOSystem.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IRRLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IRRMeshLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IRRShared.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\irrXMLWrapper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\JoinVerticesProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\light.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LimitBoneWeightsProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LineSplitter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LogAux.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Logger.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LogStream.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LWOAnimation.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LWOFileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LWOLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LWSLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Macros.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MakeVerboseFormat.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\material.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MaterialSystem.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MathFunctions.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\matrix3x3.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\matrix4x4.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MD2FileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MD2Loader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MD2NormalTable.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MD3FileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MD3Loader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MD4FileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MD5Loader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MD5Parser.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MDCFileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MDCLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MDCNormalTable.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MDLDefaultColorMap.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MDLFileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MDLLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MemoryIOWrapper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\mesh.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\metadata.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MS3DLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\NDOLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\NFFLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\NullLogger.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ObjExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ObjFileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ObjFileImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ObjFileMtlImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ObjFileParser.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ObjTools.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OFFLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OgreBinarySerializer.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OgreImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OgreParsingUtils.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OgreStructs.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OgreXmlSerializer.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OpenGEXExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OpenGEXImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OpenGEXStructs.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OptimizeGraph.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\OptimizeMeshes.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ParsingUtils.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\PlyExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\PlyLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\PlyParser.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\PolyTools.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\port\AndroidJNI\AndroidJNIIOSystem.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\postprocess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\PretransformVertices.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ProcessHelper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Profiler.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ProgressHandler.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Q3BSPFileData.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Q3BSPFileImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Q3BSPFileParser.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Q3BSPZipArchive.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Q3DLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\qnan.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\quaternion.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\RawLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\RemoveComments.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\RemoveRedundantMaterials.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\RemoveVCProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\scene.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SceneCombiner.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ScenePreprocessor.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ScenePrivate.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SGSpatialSort.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SIBImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SkeletonMeshBuilder.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SMDLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SmoothingGroups.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SortByPTypeProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SpatialSort.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SplitByBoneCountProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SplitLargeMeshes.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StandardShapes.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StdOStreamLogStream.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StepExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\STEPFile.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\STEPFileEncoding.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\STEPFileReader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\STLExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\STLLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StreamReader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StreamWriter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StringComparison.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StringUtils.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Subdivision.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\TargetAnimation.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\TerragenLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\texture.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\TextureTransform.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\TinyFormatter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\TriangulateProcess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\types.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\UnrealLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ValidateDataStructure.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\vector2.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\vector3.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\version.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Vertex.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\VertexTriangleAdjacency.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Win32DebugLogStream.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\XFileExporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\XFileHelper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\XFileImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\XFileParser.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\XGLLoader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\XMLTools.h" />
+    <ClInclude Include="Dependencies\imGUI\imconfig.h" />
+    <ClInclude Include="Dependencies\imGUI\imgui.h" />
+    <ClInclude Include="Dependencies\imGUI\imgui_impl_dx11.h" />
+    <ClInclude Include="Dependencies\imGUI\imgui_impl_win32.h" />
+    <ClInclude Include="Dependencies\imGUI\imgui_internal.h" />
+    <ClInclude Include="Dependencies\imGUI\imstb_rectpack.h" />
+    <ClInclude Include="Dependencies\imGUI\imstb_textedit.h" />
+    <ClInclude Include="Dependencies\imGUI\imstb_truetype.h" />
+    <ClInclude Include="Dependencies\PNGLoader\lodepng.h" />
     <ClInclude Include="GlobalDefs.h" />
+    <ClInclude Include="ImGuiManager\ImGUIManager.h" />
+    <ClInclude Include="InputSystem\InputActions.h" />
+    <ClInclude Include="InputSystem\InputSystem.h" />
+    <ClInclude Include="Mesh\Mesh.h" />
+    <ClInclude Include="Mesh\Model.h" />
+    <ClInclude Include="Renderer\BindToPipeline.h" />
     <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="ShaderSystem\ShaderSystem.h" />
+    <ClInclude Include="Transform\Transform.h" />
+    <ClInclude Include="Utils\GparhicsFundamentals.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dependencies\assimp\include\assimp\color4.inl" />
+    <None Include="Dependencies\assimp\include\assimp\material.inl" />
+    <None Include="Dependencies\assimp\include\assimp\matrix3x3.inl" />
+    <None Include="Dependencies\assimp\include\assimp\matrix4x4.inl" />
+    <None Include="Dependencies\assimp\include\assimp\quaternion.inl" />
+    <None Include="Dependencies\assimp\include\assimp\vector2.inl" />
+    <None Include="Dependencies\assimp\include\assimp\vector3.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\PixelSha.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)sMESHer\Shaders\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)sMESHer\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shaders\VertexSh.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)sMESHer\Shaders\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)sMESHer\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
