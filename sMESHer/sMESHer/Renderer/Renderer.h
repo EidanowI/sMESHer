@@ -16,7 +16,7 @@ class Renderer {
 	//friend class Mesh;
 public:
 	struct AvailableAdapterDesc {
-		char name[16]{};
+		char name[64]{};
 		IDXGIAdapter* adapter = nullptr;
 	};
 public:
@@ -32,8 +32,6 @@ private:
 public:
 	static void Initialize(int indexOfAdapter = 0) noexcept;
 	static void Terminate() noexcept;
-
-	static void Render() noexcept;
 
 	static void Recreate(int indexOfAdapter = 0) noexcept;
 

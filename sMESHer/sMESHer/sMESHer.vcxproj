@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="AppWindow\AppWindow.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Dependencies\imGUI\imgui.cpp" />

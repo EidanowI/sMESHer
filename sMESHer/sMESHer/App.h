@@ -11,6 +11,7 @@
 
 
 class App {
+	friend class ImGUIManager;
 public:
 	App() = delete;
 	~App() = delete;
@@ -49,34 +50,31 @@ private:
 
 public:
 	static int Run() noexcept {
-		ImGUIManager imGuiManager = ImGUIManager();
 		do {
+			m_isShouldCloseWindowAndCreateNew = false;
+
+			ImGUIManager imGuiManager = ImGUIManager();
+			AppWindow::Initialize();
+			Renderer::Initialize(m_GPUIndex);
+			
+
 			InputSystem::Initialize();
 			InputSystem::PopulateWithStandarts();
-			m_isShouldCloseWindowAndCreateNew = false;
-			//if (m_isShouldCloseWindowAndCreateNew) {
-			//	m_isShouldCloseWindowAndCreateNew = false;
-			//	Renderer::Recreate();
-			//}
-			//else {
-				AppWindow::Initialize();
-				Renderer::Initialize();
-			//}
 
 			MainLoop();
 
 			InputSystem::Terminate();
 			ShaderSystem::Clear();
+			Renderer::Terminate();
+			AppWindow::Terminate();
 
 		} while (m_isShouldCloseWindowAndCreateNew);
 		
-		Renderer::Terminate();
-		AppWindow::Terminate();
+		
 		return TYLER_DURDEN;
 	}
 
 private:
 	static bool m_isShouldCloseWindowAndCreateNew;
+	static int m_GPUIndex;
 };
-
-bool App::m_isShouldCloseWindowAndCreateNew = false;

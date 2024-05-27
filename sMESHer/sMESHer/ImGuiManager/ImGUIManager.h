@@ -56,6 +56,7 @@ public:
 
 		return a;
 	}
+	void EnableGpuSwitching() noexcept;
 
 private:
     static std::string s_modeStr;

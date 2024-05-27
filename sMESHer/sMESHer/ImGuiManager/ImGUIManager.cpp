@@ -1,6 +1,7 @@
 #include "ImGUIManager.h"
 #include "../AppWindow/AppWindow.h"
 #include "../Renderer/Renderer.h"
+#include "../App.h"
 
 
 extern bool SHOULD_CLOSE_WINDOW_AND_CREATE_NEW;
@@ -8,6 +9,7 @@ extern bool SHOULD_CLOSE_WINDOW_AND_CREATE_NEW;
 bool ImGUIManager::S_isCreated = false;
 bool ImGUIManager::S_isShowGraphicsSetupWindow = false;
 std::string ImGUIManager::s_modeStr = " - (OBJECT)";
+
 
 
 char* wcharTochar(const wchar_t* _wchar)
@@ -69,7 +71,8 @@ void ImGUIManager::ShowMenuBar() noexcept {
 				//Scene::m_models.push_back(mdl);
 			}
 			if (ImGui::MenuItem("Change\nGPU", "Ctrl + G")) {
-
+				S_isShowGraphicsSetupWindow = true;
+				//App::m_isShouldCloseWindowAndCreateNew = true;
 			}
 			//ShowExampleMenuFile();
 			ImGui::EndMenu();
@@ -89,8 +92,33 @@ void ImGUIManager::ShowMenuBar() noexcept {
 	}
 }
 
+void ImGUIManager::EnableGpuSwitching() noexcept {
+
+}
 
 void ImGUIManager::ShowGUIWindows() noexcept {
+	if (S_isShowGraphicsSetupWindow) {
+		ImGui::Begin("GPU Selector");
+		ImGui::SetWindowSize(ImVec2(400, 80));
+
+		static int gpuIndex = 0;
+
+		std::vector<char*> gpuNames;
+		for (int i = 0; i < Renderer::m_availableDevices.size(); i++) {
+			gpuNames.push_back(Renderer::m_availableDevices[i].name);
+		}
+		ImGui::Combo(" ", &gpuIndex, gpuNames.data(), Renderer::m_availableDevices.size());
+		if (gpuIndex != App::m_GPUIndex) {
+			if (ImGui::Button("Change GPU")) {
+				App::m_GPUIndex = gpuIndex;
+				App::m_isShouldCloseWindowAndCreateNew = true;
+				S_isShowGraphicsSetupWindow = false;
+			}
+		}
+		ImGui::End();
+
+	}
+
 	/*ImGui::Begin("Main Setup Window");
 	ImGui::Checkbox("Show Graphics Sepup", &S_isShowGraphicsSetupWindow);
 	ImGui::End();

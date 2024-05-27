@@ -75,9 +75,8 @@ void Renderer::Initialize(int indexOfAdapter) noexcept{
 	if (m_availableDevices.empty()) {
 		pAdapter = GetMostPowerfulGPUAdapter();
 	}
-	else {
-		pAdapter = m_availableDevices[indexOfAdapter].adapter;
-	}
+
+	pAdapter = m_availableDevices[indexOfAdapter].adapter;
 
 	D3D11CreateDeviceAndSwapChain(
 		pAdapter,//video adapter device 0 - use system setings
@@ -177,12 +176,9 @@ void Renderer::Terminate() noexcept {
 	m_availableDevices.clear();
 }
 
-void Renderer::Render() noexcept {
-	
-}
-
 void Renderer::Recreate(int indexOfAdapter) noexcept {
 	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
 
 	delete s_pCamera;
 
@@ -292,6 +288,9 @@ void Renderer::Recreate(int indexOfAdapter) noexcept {
 	SetupViewPort();
 	SetRenderTargets();
 
+	ImGui::StyleColorsLight();
+
+	ImGui_ImplWin32_Init(AppWindow::s_hWnd);
 	ImGui_ImplDX11_Init(s_pDevice, s_pDeviceContext);
 }
 
@@ -306,7 +305,7 @@ IDXGIAdapter* Renderer::GetMostPowerfulGPUAdapter() noexcept {
 		DXGI_ADAPTER_DESC adapterDesc;
 
 		pAdapter->GetDesc(&adapterDesc);
-		for (int j = 0; j < 16; j++) {
+		for (int j = 0; j < 64; j++) {
 			desc.name[j] = adapterDesc.Description[j];
 		}
 		desc.adapter = pAdapter;
