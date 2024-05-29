@@ -49,10 +49,12 @@ public:
 			Renderer::s_pCamera->TranslatePosition(-0.09f, Renderer::s_pCamera->m_forward);
 	};
 	static void Move_Forward_By_Wheel(int x, int y) noexcept {
-		Renderer::s_pCamera->TranslatePosition(1.2f, Renderer::s_pCamera->m_forward);
+		if (InputSystem::s_isInputDelta)
+			Renderer::s_pCamera->TranslatePosition(1.2f, Renderer::s_pCamera->m_forward);
 	};
 	static void Move_Back_By_Wheel(int x, int y) noexcept {
-		Renderer::s_pCamera->TranslatePosition(-1.2f, Renderer::s_pCamera->m_forward);
+		if (InputSystem::s_isInputDelta)
+			Renderer::s_pCamera->TranslatePosition(-1.2f, Renderer::s_pCamera->m_forward);
 	};
 	static void Move_Up(LPARAM lParam) noexcept {
 		if (InputSystem::s_isInputDelta)

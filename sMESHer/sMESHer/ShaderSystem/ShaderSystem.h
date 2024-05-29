@@ -25,6 +25,7 @@ public:
 	struct TestVert_CBuf1 {
 		DirectX::XMMATRIX modelMatrix;
 		DirectX::XMMATRIX normalMatrix;
+		float color[4];
 	};
 
 

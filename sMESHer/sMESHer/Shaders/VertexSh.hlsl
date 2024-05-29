@@ -8,6 +8,7 @@ cbuffer ConstBuf1 : register(b1)
 {
     matrix BUF1_model;
     matrix BUF1_modelTR;
+    float4 BUF1_color;
 };
 
 struct VSOut
@@ -30,7 +31,7 @@ VSOut main(float3 v_pos : Position, float3 v_normal : Normal, float2 v_UV : UV, 
     //ret.VS_Normal = mul(BUF1_modelTR, float4(v_normal, 0.0f));
     ret.VS_Normal = mul((float3x3) BUF1_modelTR, v_normal);
     ret.VS_UV = v_UV;
-    ret.VS_color = v_Color;
+    ret.VS_color = BUF1_color;
     ret.VS_pixelPosWS = mul(BUF1_model, float4(v_pos.xyz, 1.0f));
     ret.VS_pixelPosVS = mul(BUF0_view, mul(BUF1_model, float4(v_pos.x, v_pos.y, v_pos.z, 1.0f)));
     ret.VS_pixelPosSS = mul(BUF0_projection, mul(BUF0_view, float4(ret.VS_pixelPosWS, 1.0f)));

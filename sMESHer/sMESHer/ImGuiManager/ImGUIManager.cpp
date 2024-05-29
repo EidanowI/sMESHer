@@ -68,6 +68,7 @@ void ImGUIManager::ShowMenuBar() noexcept {
 				Model m(nullptr);
 				m.LoadIntoScene();
 
+				Scene::SortModels();
 				//Model* mdl = new Model();
 				//Scene::m_models.push_back(mdl);
 			}
@@ -182,10 +183,28 @@ void ImGUIManager::ShowModelViewer() noexcept {
 			isInit = true;
 		}
 		ImGui::SeparatorText("Models on scene");
-		ImGui::ListBox("", &Scene::m_selectedModelIndex, Scene::m_namesCstr.data(), Scene::m_namesCstr.size(), 8);
+
+		char searchBuf[64]{};
+		ImGui::InputText("Serch model", searchBuf, sizeof(searchBuf));
+
+		ImGui::ListBox("##", &Scene::m_selectedModelIndex, Scene::m_namesCstr.data(), Scene::m_namesCstr.size(), 8);
 		ImGui::SeparatorText("Edit propertyes");
 		if (!Scene::m_models.empty()) {
+			int startNameLenght = Scene::m_models[Scene::m_selectedModelIndex]->m_nameLength;
 			ImGui::InputText("Name", Scene::m_models[Scene::m_selectedModelIndex]->m_name, 64);
+			for (int i = 0; i < 64; i++) {
+				if (Scene::m_models[Scene::m_selectedModelIndex]->m_name[i] == '\0') {
+					if (i != startNameLenght) {
+						Scene::m_models[Scene::m_selectedModelIndex]->m_nameLength = i;
+						Scene::SortModels();
+					}
+					break;
+				}				
+			}
+
+			if (ImGui::Button("Sluch")) {
+				
+			}
 
 			ImGui::SeparatorText("Position");
 			float posX = Scene::m_models[Scene::m_selectedModelIndex]->m_position.x;
@@ -228,6 +247,11 @@ void ImGUIManager::ShowModelViewer() noexcept {
 			{
 				Scene::m_models[Scene::m_selectedModelIndex]->SetScale(scaleX, scaleY, scaleZ);
 			}
+			ImGui::SeparatorText("Color");
+			ImGui::ColorPicker4("ModleColor", Scene::m_models[Scene::m_selectedModelIndex]->m_vertConstBuf1Struct.color);
+			Scene::m_models[Scene::m_selectedModelIndex]->UpdateConstBuffer();
+
+			
 		}
 		ImGui::End();
 	}

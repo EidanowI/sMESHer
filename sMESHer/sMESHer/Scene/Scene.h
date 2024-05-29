@@ -8,6 +8,8 @@
 
 class Scene {
 public:
+	static void qsortRecursive(Model** array, int size);
+
 
 	static void OnChangeGPU() noexcept;
 	static void Clear() noexcept {
@@ -20,6 +22,8 @@ public:
 	}
 	static void AddModel(const char* path) noexcept;
 	static void RecreateNames() noexcept;
+
+	static void SortModels() noexcept;
 
 	static std::vector<Model*> m_models;
 	static std::vector<const char*> m_namesCstr;

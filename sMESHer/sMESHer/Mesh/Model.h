@@ -46,5 +46,8 @@ private:
 	unsigned short m_vertexShaderIndex;
 	unsigned short m_pixelShaderIndex;
 
+public:
 	char m_name[64];
+	int m_nameLength;
+	int m_vertexCount;
 };

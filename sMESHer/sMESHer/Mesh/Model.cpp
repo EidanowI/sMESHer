@@ -14,6 +14,10 @@ Model::Model(Mesh* pMesh) noexcept{
 	m_scale = GraphicsFundament::Vector3D(1.0f, 1.0f, 1.0f);
 	m_vertConstBuf1Struct.modelMatrix = m_transform;
 	m_vertConstBuf1Struct.normalMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_transform));
+	m_vertConstBuf1Struct.color[0] = 1.0f;
+	m_vertConstBuf1Struct.color[1] = 1.0f;
+	m_vertConstBuf1Struct.color[2] = 1.0f;
+	m_vertConstBuf1Struct.color[3] = 1.0f;
 	m_pVertConstBuf1 = Renderer::CreateConstBuffer((char*)&m_vertConstBuf1Struct, sizeof(ShaderSystem::TestVert_CBuf1));
 
 	UpdateTransform();
@@ -30,10 +34,13 @@ void Model::LoadNode(const aiNode* node, const aiScene* scene) {
 
 		Model* pModel = new Model(LoadMesh(mesh, scene));
 		std::string tmp = std::string(scene->mMeshes[node->mMeshes[i]]->mName.C_Str());
+		pModel->m_nameLength = tmp.size();
+		pModel->m_vertexCount = pModel->m_pMeshe->m_sourceVerticiesNum;
 		for (int i = 0; i < tmp.size(); i++) {
 			pModel->m_name[i] = tmp[i];
 			if (i == 63) {
 				pModel->m_name[i] = '\0';
+				pModel->m_nameLength = i;
 				break;
 			}
 		}
