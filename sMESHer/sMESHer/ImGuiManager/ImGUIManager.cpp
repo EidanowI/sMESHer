@@ -2,6 +2,7 @@
 #include "../AppWindow/AppWindow.h"
 #include "../Renderer/Renderer.h"
 #include "../App.h"
+#include "../Mesh/Model.h"
 
 
 extern bool SHOULD_CLOSE_WINDOW_AND_CREATE_NEW;
@@ -59,18 +60,18 @@ void ImGUIManager::ShowMenuBar() noexcept {
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("New", "Ctrl + N")) {
+			if (ImGui::MenuItem("New")) {
 				Scene::Clear();
 			}
-			if (ImGui::MenuItem("Save As", "Ctrl + S")) {}
-			if (ImGui::MenuItem("Add", "Ctrl + A")) {
+			if (ImGui::MenuItem("Save As")) {}
+			if (ImGui::MenuItem("Add")) {
 				Model m(nullptr);
 				m.LoadIntoScene();
 
 				//Model* mdl = new Model();
 				//Scene::m_models.push_back(mdl);
 			}
-			if (ImGui::MenuItem("Change\nGPU", "Ctrl + G")) {
+			if (ImGui::MenuItem("Change\nGPU")) {
 				S_isShowGraphicsSetupWindow = true;
 				//App::m_isShouldCloseWindowAndCreateNew = true;
 			}
@@ -79,11 +80,13 @@ void ImGUIManager::ShowMenuBar() noexcept {
 		}
 		if (ImGui::BeginMenu(("Mode" + s_modeStr).c_str()))
 		{
-			if (ImGui::MenuItem("Object Mode", "Tab")) {
+			if (ImGui::MenuItem("Object Mode")) {
 				s_modeStr = " - (OBJECT)";
+				App::s_isEditMode = false;
 			}
-			if (ImGui::MenuItem("Edit Mode", "Tab")) {
+			if (ImGui::MenuItem("Edit Mode")) {
 				s_modeStr = " - (EDIT)";
+				App::s_isEditMode = true;
 			}
 			ImGui::EndMenu();
 		}
@@ -167,4 +170,65 @@ void ImGUIManager::EnableImGuiMouse()
 void ImGUIManager::DisableImGuiMouse()
 {
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+}
+
+void ImGUIManager::ShowModelViewer() noexcept {
+	static bool isInit = false;
+	if (!App::s_isEditMode) {
+		ImGui::Begin("Model Editor");
+		if (!isInit) {
+			ImGui::SetWindowPos(ImVec2(1510, 140));
+			ImGui::SetWindowSize(ImVec2(343, 655));
+			isInit = true;
+		}
+		ImGui::SeparatorText("Models on scene");
+		ImGui::ListBox("", &Scene::m_selectedModelIndex, Scene::m_namesCstr.data(), Scene::m_namesCstr.size(), 8);
+		ImGui::SeparatorText("Edit propertyes");
+		if (!Scene::m_models.empty()) {
+			ImGui::InputText("Name", Scene::m_models[Scene::m_selectedModelIndex]->m_name, 64);
+
+			ImGui::SeparatorText("Position");
+			float posX = Scene::m_models[Scene::m_selectedModelIndex]->m_position.x;
+			float posY = Scene::m_models[Scene::m_selectedModelIndex]->m_position.y;
+			float posZ = Scene::m_models[Scene::m_selectedModelIndex]->m_position.z;
+			ImGui::DragFloat("PositionX", &posX, 0.005f);
+			ImGui::DragFloat("PositionY", &posY, 0.005f);
+			ImGui::DragFloat("PositionZ", &posZ, 0.005f);
+			if (Scene::m_models[Scene::m_selectedModelIndex]->m_position.x != posX ||
+				Scene::m_models[Scene::m_selectedModelIndex]->m_position.y != posY ||
+				Scene::m_models[Scene::m_selectedModelIndex]->m_position.z != posZ) 
+			{
+				Scene::m_models[Scene::m_selectedModelIndex]->SetPosition(posX, posY, posZ);
+			}
+
+			ImGui::SeparatorText("Rotation");
+			float rotX = Scene::m_models[Scene::m_selectedModelIndex]->m_rotation.x;
+			float rotY = Scene::m_models[Scene::m_selectedModelIndex]->m_rotation.y;
+			float rotZ = Scene::m_models[Scene::m_selectedModelIndex]->m_rotation.z;
+			ImGui::DragFloat("RotationX", &rotX, 0.005f);
+			ImGui::DragFloat("RotationY", &rotY, 0.005f);
+			ImGui::DragFloat("RotationZ", &rotZ, 0.005f);
+			if (Scene::m_models[Scene::m_selectedModelIndex]->m_rotation.x != rotX ||
+				Scene::m_models[Scene::m_selectedModelIndex]->m_rotation.y != rotY ||
+				Scene::m_models[Scene::m_selectedModelIndex]->m_rotation.z != rotZ)
+			{
+				Scene::m_models[Scene::m_selectedModelIndex]->SetRotation(rotX, rotY, rotZ);
+			}
+
+			ImGui::SeparatorText("Scale");
+			float scaleX = Scene::m_models[Scene::m_selectedModelIndex]->m_scale.x;
+			float scaleY = Scene::m_models[Scene::m_selectedModelIndex]->m_scale.y;
+			float scaleZ = Scene::m_models[Scene::m_selectedModelIndex]->m_scale.z;
+			ImGui::DragFloat("ScaleX", &scaleX, 0.005f);
+			ImGui::DragFloat("ScaleY", &scaleY, 0.005f);
+			ImGui::DragFloat("ScaleZ", &scaleZ, 0.005f);
+			if (Scene::m_models[Scene::m_selectedModelIndex]->m_scale.x != scaleX ||
+				Scene::m_models[Scene::m_selectedModelIndex]->m_scale.y != scaleY ||
+				Scene::m_models[Scene::m_selectedModelIndex]->m_scale.z != scaleZ)
+			{
+				Scene::m_models[Scene::m_selectedModelIndex]->SetScale(scaleX, scaleY, scaleZ);
+			}
+		}
+		ImGui::End();
+	}
 }

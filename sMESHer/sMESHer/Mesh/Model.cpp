@@ -2,30 +2,6 @@
 #include "../ImGuiManager/ImGUIManager.h"
 
 
-/*Model::Model(const char* path) noexcept {
-	m_vertexShaderIndex = ShaderSystem::GetVertexShaderIndex("VertexSh", "Shaders/");
-	m_pixelShaderIndex = ShaderSystem::GetPixelShaderIndex("PixelSha", "Shaders/");
-
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_FlipUVs | aiProcess_Triangulate);
-	if (scene == nullptr ||
-		scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-		!scene->mRootNode) {
-
-		return;
-	}
-	m_meshes = std::vector<char*>();
-	LoadNode(scene->mRootNode, scene);
-
-	m_position = GraphicsFundament::Vector3D(0.0f, 0.0f, 0.0f);
-	m_rotation = GraphicsFundament::Vector3D(0.0f, 0.0f, 0.0f);
-	m_scale = GraphicsFundament::Vector3D(1.0f, 1.0f, 1.0f);
-	m_vertConstBuf1Struct.modelMatrix = m_transform;
-	m_vertConstBuf1Struct.normalMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_transform));
-	m_pVertConstBuf1 =Renderer::CreateConstBuffer((char*)&m_vertConstBuf1Struct, sizeof(ShaderSystem::TestVert_CBuf1));
-
-	UpdateTransform();
-}*/
 
 Model::Model(Mesh* pMesh) noexcept{
 	m_vertexShaderIndex = ShaderSystem::GetVertexShaderIndex("VertexSh", "Shaders/");
@@ -42,37 +18,7 @@ Model::Model(Mesh* pMesh) noexcept{
 
 	UpdateTransform();
 }
-/*Model::Model() noexcept {
-	m_vertexShaderIndex = ShaderSystem::GetVertexShaderIndex("VertexSh", "Shaders/");
-	m_pixelShaderIndex = ShaderSystem::GetPixelShaderIndex("PixelSha", "Shaders/");
-
-	char* a = ImGUIManager::ReadFileName();
-
-	Assimp::Importer importer;
-	const aiScene* sceneee = importer.ReadFile(a, aiProcess_FlipUVs | aiProcess_Triangulate);
-	if (sceneee == nullptr ||
-		sceneee->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-		!sceneee->mRootNode) {
-
-		return;
-	}
-	m_meshes = std::vector<char*>();
-	LoadNode(sceneee->mRootNode, sceneee);
-
-	m_position = GraphicsFundament::Vector3D(0.0f, 0.0f, 0.0f);
-	m_rotation = GraphicsFundament::Vector3D(0.0f, 0.0f, 0.0f);
-	m_scale = GraphicsFundament::Vector3D(1.0f, 1.0f, 1.0f);
-	m_vertConstBuf1Struct.modelMatrix = m_transform;
-	m_vertConstBuf1Struct.normalMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_transform));
-	m_pVertConstBuf1 = Renderer::CreateConstBuffer((char*)&m_vertConstBuf1Struct, sizeof(ShaderSystem::TestVert_CBuf1));
-
-	UpdateTransform();
-}*/
 Model::~Model() noexcept {
-	/*for (int i = 0; i < m_meshes.size(); i++) {
-		delete ((Mesh*)m_meshes[i]);
-	}*/
-
 	delete m_pMeshe;
 }
 
@@ -81,7 +27,16 @@ void Model::LoadNode(const aiNode* node, const aiScene* scene) {
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+
 		Model* pModel = new Model(LoadMesh(mesh, scene));
+		std::string tmp = std::string(scene->mMeshes[node->mMeshes[i]]->mName.C_Str());
+		for (int i = 0; i < tmp.size(); i++) {
+			pModel->m_name[i] = tmp[i];
+			if (i == 63) {
+				pModel->m_name[i] = '\0';
+				break;
+			}
+		}
 		pModel->m_position = GraphicsFundament::Vector3D(node->mTransformation.a4, node->mTransformation.b4, node->mTransformation.c4);
 		pModel->UpdateTransform();
 		Scene::m_models.push_back(pModel);
@@ -167,4 +122,28 @@ void Model::LoadIntoScene() noexcept {
 
 	Model m(nullptr);
 	m.LoadNode(sceneee->mRootNode, sceneee);
+
+	Scene::RecreateNames();
+}
+
+void Model::RecreateAfterChangingGPU() noexcept {
+	if (m_pVertConstBuf1 != nullptr) {
+		m_pVertConstBuf1->Release();
+		m_pVertConstBuf1 = nullptr;
+	}
+
+	m_pVertConstBuf1 = Renderer::CreateConstBuffer((char*)&m_vertConstBuf1Struct, sizeof(ShaderSystem::TestVert_CBuf1));
+
+	Mesh* newMesh = new Mesh(
+		m_pMeshe->m_pSourceVerticies,
+		m_pMeshe->m_sourceVerticiesNum,
+		m_pMeshe->m_pSourceIndecies,
+		m_pMeshe->m_sourceIndeciesNum,
+		m_vertexShaderIndex
+	);
+	m_pMeshe->m_pSourceVerticies = nullptr;
+	m_pMeshe->m_pSourceIndecies = nullptr;
+	delete m_pMeshe;
+
+	m_pMeshe = newMesh;
 }

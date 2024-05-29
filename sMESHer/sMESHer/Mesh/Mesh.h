@@ -5,6 +5,7 @@
 #include "../Utils/GparhicsFundamentals.h"
 
 class Mesh {
+	friend class Model;
 public:
 	struct Vertex48B {
 		GraphicsFundament::Vector3D position;

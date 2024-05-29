@@ -9,7 +9,7 @@
 class Scene {
 public:
 
-
+	static void OnChangeGPU() noexcept;
 	static void Clear() noexcept {
 		m_models.clear();
 	}
@@ -19,8 +19,10 @@ public:
 		}
 	}
 	static void AddModel(const char* path) noexcept;
+	static void RecreateNames() noexcept;
 
 	static std::vector<Model*> m_models;
-	static Model* m_pSelectedModel;
+	static std::vector<const char*> m_namesCstr;
+	static int m_selectedModelIndex;
 };
 

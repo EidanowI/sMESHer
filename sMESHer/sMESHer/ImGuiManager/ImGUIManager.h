@@ -27,7 +27,7 @@ public:
 	static void EnableImGuiMouse();
 	static void DisableImGuiMouse();
 
-
+	static void ShowModelViewer() noexcept;
 	static void ShowMenuBar() noexcept;
 	static char* ReadFileName() noexcept {
 		OPENFILENAMEA ofn = { 0 };
@@ -43,7 +43,7 @@ public:
 		ofn.lpstrFileTitle = szFileTitle;
 		ofn.nMaxFileTitle = 260 * 2;
 		ofn.lpstrInitialDir = NULL;
-		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
 
 		char* a = nullptr;

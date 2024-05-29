@@ -16,10 +16,9 @@
 #include "Mesh.h"
 
 
-
-class Mesh;
-
 class Model : public Transform{
+	friend class ImGUIManager;
+	friend class Scene;
 public:
 	//Model(const char* path) noexcept;
 	//Model() noexcept;
@@ -30,6 +29,8 @@ public:
 	void UpdateConstBuffer() noexcept;
 
 	void LoadIntoScene() noexcept;
+
+	void RecreateAfterChangingGPU() noexcept;
 
 private:
 	void LoadNode(const aiNode* node, const aiScene* scene);
@@ -44,4 +45,6 @@ private:
 
 	unsigned short m_vertexShaderIndex;
 	unsigned short m_pixelShaderIndex;
+
+	char m_name[64];
 };

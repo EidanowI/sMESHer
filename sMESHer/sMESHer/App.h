@@ -31,6 +31,7 @@ private:
 			ImGUIManager::ShowGUIWindows();
 
 			ImGUIManager::ShowMenuBar();
+			ImGUIManager::ShowModelViewer();
 
 			Renderer::s_pCamera->UpdateFpsRotation();
 			Renderer::s_pCamera->Bind();
@@ -52,17 +53,16 @@ public:
 	static int Run() noexcept {
 		do {
 			m_isShouldCloseWindowAndCreateNew = false;
-
 			ImGUIManager imGuiManager = ImGUIManager();
 			AppWindow::Initialize();
 			Renderer::Initialize(m_GPUIndex);
-			
 
 			InputSystem::Initialize();
 			InputSystem::PopulateWithStandarts();
 
 			MainLoop();
 
+			Scene::Clear();
 			InputSystem::Terminate();
 			ShaderSystem::Clear();
 			Renderer::Terminate();
@@ -77,4 +77,5 @@ public:
 private:
 	static bool m_isShouldCloseWindowAndCreateNew;
 	static int m_GPUIndex;
+	static bool s_isEditMode;
 };
