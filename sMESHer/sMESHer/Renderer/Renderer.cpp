@@ -114,7 +114,7 @@ void Renderer::Initialize(int indexOfAdapter) noexcept{
 	{
 		dpthStnTextureDesc.Width = APP_WINDOW_WIDTH;
 		dpthStnTextureDesc.Height = APP_WINDOW_HEIGHT;
-		dpthStnTextureDesc.MipLevels = 1u;
+		dpthStnTextureDesc.MipLevels = 0u;
 		dpthStnTextureDesc.ArraySize = 1u;
 		dpthStnTextureDesc.Format = DXGI_FORMAT_D32_FLOAT;
 		dpthStnTextureDesc.SampleDesc.Count = 1u;

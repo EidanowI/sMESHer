@@ -155,6 +155,7 @@
     <ClCompile Include="Dependencies\PNGLoader\lodepng.cpp" />
     <ClCompile Include="ImGuiManager\ImGUIManager.cpp" />
     <ClCompile Include="InputSystem\InputSystem.cpp" />
+    <ClCompile Include="Light\Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh\Mesh.cpp" />
     <ClCompile Include="Mesh\Model.cpp" />
@@ -410,6 +411,7 @@
     <ClInclude Include="ImGuiManager\ImGUIManager.h" />
     <ClInclude Include="InputSystem\InputActions.h" />
     <ClInclude Include="InputSystem\InputSystem.h" />
+    <ClInclude Include="Light\Light.h" />
     <ClInclude Include="Mesh\Mesh.h" />
     <ClInclude Include="Mesh\Model.h" />
     <ClInclude Include="Renderer\BindToPipeline.h" />
@@ -429,6 +431,12 @@
     <None Include="Dependencies\assimp\include\assimp\vector3.inl" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shaders\LampShad.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)sMESHer\Shaders\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)sMESHer\Shaders\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="Shaders\PixelSha.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

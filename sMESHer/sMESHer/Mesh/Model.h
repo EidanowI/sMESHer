@@ -20,8 +20,7 @@ class Model : public Transform{
 	friend class ImGUIManager;
 	friend class Scene;
 public:
-	//Model(const char* path) noexcept;
-	//Model() noexcept;
+	Model(const std::string& path) noexcept;
 	Model(Mesh* pMesh) noexcept;
 	~Model() noexcept;
 
@@ -30,15 +29,12 @@ public:
 
 	void LoadIntoScene() noexcept;
 
-	void RecreateAfterChangingGPU() noexcept;
-
 private:
+	Mesh* LoadOne(const aiNode* node, const aiScene* scene);
 	void LoadNode(const aiNode* node, const aiScene* scene);
 	Mesh* LoadMesh(const aiMesh* mesh, const aiScene* scene);
 
-	//std::vector<char*> m_meshes;
 	Mesh* m_pMeshe;
-
 
 	ShaderSystem::TestVert_CBuf1 m_vertConstBuf1Struct;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertConstBuf1;

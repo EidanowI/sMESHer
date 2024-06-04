@@ -3,9 +3,11 @@
 std::vector<Model*> Scene::m_models = std::vector<Model*>();
 std::vector<const char*> Scene::m_namesCstr = std::vector<const char*>();
 int Scene::m_selectedModelIndex = 0;
+Light* Scene::s_pLight = nullptr;
 
 
-void Scene::qsortRecursive(Model** arr, int size) {
+
+void Scene::QsortRecursive(Model** arr, int size) {
     //Указатели в начало и в конец массива
     int i = 0;
     int j = size - 1;
@@ -40,26 +42,42 @@ void Scene::qsortRecursive(Model** arr, int size) {
     //Рекурсивные вызовы, если осталось, что сортировать
     if (j > 0) {
         //"Левый кусок"
-        qsortRecursive(arr, j + 1);
+        QsortRecursive(arr, j + 1);
     }
     if (i < size) {
         //"Првый кусок"
-        qsortRecursive(&arr[i], size - i);
+        QsortRecursive(&arr[i], size - i);
+    }
+}
+int Scene::InterpolateSearch(int searchLength) noexcept {
+    int midle = 0;
+    int lowIndex = 0;
+    int highIndex = m_models.size() - 1;
+
+    while (m_models[lowIndex]->m_nameLength <= searchLength && m_models[highIndex]->m_nameLength >= searchLength)
+    {
+        midle = lowIndex 
+            + ((searchLength - m_models[lowIndex]->m_nameLength) 
+                * (highIndex - lowIndex)) 
+            / (m_models[highIndex]->m_nameLength - m_models[lowIndex]->m_nameLength);
+        if (m_models[midle]->m_nameLength < searchLength) lowIndex = midle + 1;
+        else if (m_models[midle]->m_nameLength > searchLength) highIndex = midle - 1;
+        else return midle;
+    }
+
+    if (m_models[lowIndex]->m_nameLength == searchLength) return lowIndex;
+    else return -1;
+}
+
+void Scene::Render() noexcept {
+    for (int i = 0; i < m_models.size(); i++) {
+        m_models[i]->Draw();
     }
 }
 
-void Scene::AddModel(const char* path) noexcept {
-	//std::string a = std::string(path);
-	//Model* pM = new Model(path);
-	//m_models.push_back(pM);
+void Scene::Clear() noexcept {
+    m_models.clear();
 }
-void Scene::OnChangeGPU() noexcept {
-
-	for (int i = 0; i < m_models.size(); i++) {
-		m_models[i]->RecreateAfterChangingGPU();
-	}
-}
-
 void Scene::RecreateNames() noexcept {
 	m_selectedModelIndex = 0;
 
@@ -73,7 +91,7 @@ void Scene::RecreateNames() noexcept {
 void Scene::SortModels() noexcept {
 	//гарантирует что индекс выбранной в массиве модели будет указывать
 	//на ту же модель даже после смены её места в массиве
-
+    if (m_models.empty()) return;
     Model* selectedModel = m_models[m_selectedModelIndex];
 
 
@@ -83,7 +101,7 @@ void Scene::SortModels() noexcept {
     for (int i = 0; i < m_models.size(); i++) {
         modelArr[i] = m_models[i];
     }
-    qsortRecursive(modelArr, m_models.size());
+    QsortRecursive(modelArr, m_models.size());
 
     m_models.clear();
     for (int i = 0; i < modelSize; i++) {
@@ -100,4 +118,36 @@ void Scene::SortModels() noexcept {
 	for (int i = 0; i < m_models.size(); i++) {
 		m_namesCstr.push_back(m_models[i]->m_name);
 	}
+}
+void Scene::BinarySearchModels(char* searchName, int length) noexcept{
+    int res = InterpolateSearch(length);
+    //int res = 0;
+    if (res == -1) return;
+
+    while (res > 1 && m_models[res]->m_nameLength == length) {
+        res--;
+    }
+    while (res < m_models.size() && m_models[res]->m_nameLength == length) {
+        bool isIt = true;
+        for (int i = 0; i < length; i++) {
+            if (m_models[res]->m_name[i] != searchName[i]) isIt = false;
+        }
+
+        if (isIt) {
+            m_selectedModelIndex = res;
+            return;
+        }
+
+        res++;
+    }
+}
+
+void Scene::UpdateLight() noexcept {
+    s_pLight->Update();
+}
+void Scene::InitLight() noexcept {
+    s_pLight = new Light();
+}
+void Scene::TerminateLight() noexcept {
+    delete s_pLight;
 }

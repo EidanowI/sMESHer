@@ -78,6 +78,9 @@
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Light\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow\AppWindow.h">
@@ -839,6 +842,9 @@
     <ClInclude Include="InputSystem\InputActions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Light\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\assimp\include\assimp\color4.inl">
@@ -866,5 +872,6 @@
   <ItemGroup>
     <FxCompile Include="Shaders\VertexSh.hlsl" />
     <FxCompile Include="Shaders\PixelSha.hlsl" />
+    <FxCompile Include="Shaders\LampShad.hlsl" />
   </ItemGroup>
 </Project>

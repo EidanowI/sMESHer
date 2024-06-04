@@ -25,11 +25,9 @@ struct VSOut
 VSOut main(float3 v_pos : Position, float3 v_normal : Normal, float2 v_UV : UV, float4 v_Color : Color)
 {
     VSOut ret;
-    //ret.VS_Pos = mul(BUF0_projection, mul(BUF0_view, mul(BUF1_model, float4(v_pos.x, v_pos.y, v_pos.z, 1.0f))));
     ret.VS_Pos = mul(BUF0_projection, mul(BUF0_view, mul(BUF1_model, float4(v_pos.x, v_pos.y, v_pos.z, 1.0f))));
-    //ret.VS_Pos = float4(v_pos.x, v_pos.y, v_pos.z, 1.0f);
-    //ret.VS_Normal = mul(BUF1_modelTR, float4(v_normal, 0.0f));
-    ret.VS_Normal = mul((float3x3) BUF1_modelTR, v_normal);
+    //ret.VS_Normal = mul((float3x3) BUF1_modelTR, v_normal);
+    ret.VS_Normal = v_normal;
     ret.VS_UV = v_UV;
     ret.VS_color = BUF1_color;
     ret.VS_pixelPosWS = mul(BUF1_model, float4(v_pos.xyz, 1.0f));

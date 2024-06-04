@@ -9,7 +9,8 @@ extern bool SHOULD_CLOSE_WINDOW_AND_CREATE_NEW;
 
 bool ImGUIManager::S_isCreated = false;
 bool ImGUIManager::S_isShowGraphicsSetupWindow = false;
-std::string ImGUIManager::s_modeStr = " - (OBJECT)";
+bool ImGUIManager::s_isShowLightEditor = false;
+std::string ImGUIManager::s_modeStr = "Show light editor";
 
 
 
@@ -35,7 +36,6 @@ ImGUIManager::ImGUIManager() noexcept {
 	ImGui::StyleColorsDark();
 	S_isCreated = true;
 }
-
 ImGUIManager::~ImGUIManager() noexcept {
 	ImGui::DestroyContext();
 	S_isCreated = false;
@@ -47,57 +47,12 @@ void ImGUIManager::NewFrame() noexcept {
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
 }
-
 void ImGUIManager::Render() noexcept {
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	ImGui::UpdatePlatformWindows();
 	ImGui::RenderPlatformWindowsDefault();
-}
-void ImGUIManager::ShowMenuBar() noexcept {
-	if (ImGui::BeginMainMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("New")) {
-				Scene::Clear();
-			}
-			if (ImGui::MenuItem("Save As")) {}
-			if (ImGui::MenuItem("Add")) {
-				Model m(nullptr);
-				m.LoadIntoScene();
-
-				Scene::SortModels();
-				//Model* mdl = new Model();
-				//Scene::m_models.push_back(mdl);
-			}
-			if (ImGui::MenuItem("Change\nGPU")) {
-				S_isShowGraphicsSetupWindow = true;
-				//App::m_isShouldCloseWindowAndCreateNew = true;
-			}
-			//ShowExampleMenuFile();
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu(("Mode" + s_modeStr).c_str()))
-		{
-			if (ImGui::MenuItem("Object Mode")) {
-				s_modeStr = " - (OBJECT)";
-				App::s_isEditMode = false;
-			}
-			if (ImGui::MenuItem("Edit Mode")) {
-				s_modeStr = " - (EDIT)";
-				App::s_isEditMode = true;
-			}
-			ImGui::EndMenu();
-		}
-
-		ImGui::EndMainMenuBar();
-	}
-}
-
-void ImGUIManager::EnableGpuSwitching() noexcept {
-
 }
 
 void ImGUIManager::ShowGUIWindows() noexcept {
@@ -120,59 +75,8 @@ void ImGUIManager::ShowGUIWindows() noexcept {
 			}
 		}
 		ImGui::End();
-
 	}
-
-	/*ImGui::Begin("Main Setup Window");
-	ImGui::Checkbox("Show Graphics Sepup", &S_isShowGraphicsSetupWindow);
-	ImGui::End();
-
-	if (S_isShowGraphicsSetupWindow) {
-		ImGui::Begin("Graphics Setup Window");
-		ImGui::SeparatorText("Select adapter params");
-
-
-		const char* cringw[10];
-		std::string aa[10];
-		for (int i = 0; i < Renderer::s_graphicDevices_SIZE; i++) {
-			std::string s(Graphics::S_pGraphicDevices[i].adapterName.begin(), Graphics::S_pGraphicDevices[i].adapterName.end());
-			aa[i] = std::to_string(Graphics::S_pGraphicDevices[i].deviceID) + ". "
-				+ s + " (score: " + std::to_string(Graphics::S_pGraphicDevices[i].score) + ")";
-			cringw[i] = aa[i].c_str();
-		}
-		static int currentAdapter = -1;
-		if (currentAdapter == -1) {
-			for (int i = 0; i < Graphics::S_graphicDevices_SIZE; i++) {
-				if (Graphics::S_pGraphicDevices[i].deviceID == Window::S_CreateWindowParams.deviceID) {
-					currentAdapter = i;
-					break;
-				}
-			}
-		}
-
-		ImGui::Combo("Adapter", &currentAdapter, cringw, Graphics::S_graphicDevices_SIZE);
-		if (Graphics::S_pGraphicDevices[currentAdapter].deviceID != Window::S_CreateWindowParams.deviceID) {
-			ImGui::SameLine();
-			if (ImGui::Button("Change Over")) {
-				Window::S_CreateWindowParams.deviceID = Graphics::S_pGraphicDevices[currentAdapter].deviceID;
-				SHOULD_CLOSE_WINDOW_AND_CREATE_NEW = true;
-			}
-		}
-		ImGui::End();
-	}*/
 }
-
-
-void ImGUIManager::EnableImGuiMouse()
-{
-	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-}
-
-void ImGUIManager::DisableImGuiMouse()
-{
-	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
-}
-
 void ImGUIManager::ShowModelViewer() noexcept {
 	static bool isInit = false;
 	if (!App::s_isEditMode) {
@@ -185,25 +89,32 @@ void ImGUIManager::ShowModelViewer() noexcept {
 		ImGui::SeparatorText("Models on scene");
 
 		char searchBuf[64]{};
-		ImGui::InputText("Serch model", searchBuf, sizeof(searchBuf));
+		int searchBufSize = 0;
+		if (ImGui::InputText("Serch model", searchBuf, sizeof(searchBuf))) {
+			for (int i = 0; i < 64; i++) {
+				if (searchBuf[i] == 0) {
+					searchBufSize = i;
+					Scene::BinarySearchModels(searchBuf, searchBufSize);
+					
+					break;
+				}
+			}
+		}
+		
 
 		ImGui::ListBox("##", &Scene::m_selectedModelIndex, Scene::m_namesCstr.data(), Scene::m_namesCstr.size(), 8);
 		ImGui::SeparatorText("Edit propertyes");
 		if (!Scene::m_models.empty()) {
-			int startNameLenght = Scene::m_models[Scene::m_selectedModelIndex]->m_nameLength;
-			ImGui::InputText("Name", Scene::m_models[Scene::m_selectedModelIndex]->m_name, 64);
-			for (int i = 0; i < 64; i++) {
-				if (Scene::m_models[Scene::m_selectedModelIndex]->m_name[i] == '\0') {
-					if (i != startNameLenght) {
-						Scene::m_models[Scene::m_selectedModelIndex]->m_nameLength = i;
-						Scene::SortModels();
+			if (ImGui::InputText("Name", Scene::m_models[Scene::m_selectedModelIndex]->m_name, 64)) {
+				for (int i = 0; i < 64; i++) {
+					if (Scene::m_models[Scene::m_selectedModelIndex]->m_name[i] == '\0') {
+						
+							Scene::m_models[Scene::m_selectedModelIndex]->m_nameLength = i;
+							Scene::SortModels();
+						
+						break;
 					}
-					break;
-				}				
-			}
-
-			if (ImGui::Button("Sluch")) {
-				
+				}
 			}
 
 			ImGui::SeparatorText("Position");
@@ -249,10 +160,116 @@ void ImGUIManager::ShowModelViewer() noexcept {
 			}
 			ImGui::SeparatorText("Color");
 			ImGui::ColorPicker4("ModleColor", Scene::m_models[Scene::m_selectedModelIndex]->m_vertConstBuf1Struct.color);
-			Scene::m_models[Scene::m_selectedModelIndex]->UpdateConstBuffer();
-
-			
+			Scene::m_models[Scene::m_selectedModelIndex]->UpdateConstBuffer();		
 		}
 		ImGui::End();
 	}
+}
+void ImGUIManager::ShowMenuBar() noexcept {
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New")) {
+				Scene::Clear();
+			}
+			if (ImGui::MenuItem("Save As")) {}
+			if (ImGui::MenuItem("Add")) {
+				Model m(nullptr);
+				m.LoadIntoScene();
+				Scene::SortModels();
+			}
+			if (ImGui::MenuItem("Change\nGPU")) {
+				S_isShowGraphicsSetupWindow = true;
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::MenuItem((s_modeStr).c_str()))
+		{
+			if (s_isShowLightEditor) {
+				s_isShowLightEditor = false;
+				s_modeStr = "Show light editor";
+			}
+			else {
+				s_isShowLightEditor = true;
+				s_modeStr = "Hide light editor";
+			}
+		}
+
+		ImGui::EndMainMenuBar();
+	}
+}
+void ImGUIManager::ShowLightEditor() noexcept {
+	if (!s_isShowLightEditor) return;
+
+	ImGui::Begin("Light editor");
+	ImGui::SeparatorText("Common");
+	ImGui::DragFloat("Pow Factor", &Scene::s_pLight->m_pixlConstBuf1Struct.powFactor,1.0f, 0, 256);
+	ImGui::DragFloat("Ambient", &Scene::s_pLight->m_pixlConstBuf1Struct.ambient, 0.01f, 0, 1);
+
+	ImGui::SeparatorText("Point Light");
+	ImGui::DragFloat("From center length", &Scene::s_pLight->m_pointLightFromCenterRadius, 0.005f);
+	ImGui::DragFloat("Rotation X", &Scene::s_pLight->m_pointLightRotation.x, 0.005f);
+	ImGui::DragFloat("Rotation Y", &Scene::s_pLight->m_pointLightRotation.y, 0.005f);
+	ImGui::DragFloat("Rotation Z", &Scene::s_pLight->m_pointLightRotation.z, 0.005f);
+	ImGui::DragFloat("Specular", &Scene::s_pLight->m_pixlConstBuf1Struct.pointLightSpecular, 0.001f);
+	ImGui::DragFloat("Constant", &Scene::s_pLight->m_pixlConstBuf1Struct.pointLightConstant, 0.001f);
+	ImGui::DragFloat("Linear", &Scene::s_pLight->m_pixlConstBuf1Struct.pointLightLinear, 0.001f);
+	ImGui::DragFloat("Quadratic", &Scene::s_pLight->m_pixlConstBuf1Struct.pointLightQuadratic, 0.001f);
+	ImGui::ColorEdit3("Light Color", &Scene::s_pLight->m_pixlConstBuf1Struct.pointLightColor.x);
+	if (ImGui::Checkbox("Enable Random Rotation", &Scene::s_pLight->m_isEnableRandomRotation)) {
+		if (Scene::s_pLight->m_isEnableRandomRotation) {
+			Scene::s_pLight->m_directionalLightRotation = GraphicsFundament::Vector3D(std::lerp(Scene::s_pLight->m_pointLightRotation.x, Scene::s_pLight->m_aspirRotation.x, Scene::s_pLight->m_aspirProgress),
+				std::lerp(Scene::s_pLight->m_pointLightRotation.y, Scene::s_pLight->m_aspirRotation.y, Scene::s_pLight->m_aspirProgress),
+				std::lerp(Scene::s_pLight->m_pointLightRotation.z, Scene::s_pLight->m_aspirRotation.z, Scene::s_pLight->m_aspirProgress));
+			Scene::s_pLight->m_aspirRotation = Scene::s_pLight->m_directionalLightRotation;
+			Scene::s_pLight->m_aspirProgress = 1.0f;
+		}
+	}
+
+	ImGui::SeparatorText("Directional Light");
+	ImGui::DragFloat("Direction X", &Scene::s_pLight->m_directionalLightRotation.x, 0.005f);
+	ImGui::DragFloat("Direction Y", &Scene::s_pLight->m_directionalLightRotation.y, 0.005f);
+	ImGui::DragFloat("Direction Z", &Scene::s_pLight->m_directionalLightRotation.z, 0.005f);
+	ImGui::ColorEdit3("Sun Color", &Scene::s_pLight->m_pixlConstBuf1Struct.dirLightColor.x);
+	ImGui::DragFloat("Sun Specular", &Scene::s_pLight->m_pixlConstBuf1Struct.dirLightSpecular, 0.001f);
+
+	ImGui::End();
+}
+
+void ImGUIManager::EnableImGuiMouse()
+{
+	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+}
+void ImGUIManager::DisableImGuiMouse()
+{
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+}
+
+char* ImGUIManager::ReadFileName() noexcept {
+	OPENFILENAMEA ofn = { 0 };
+	char* szFile = new char[260]();
+	char* szFileTitle = new char[260]();
+	// Initialize remaining fields of OPENFILENAME structure
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = AppWindow::s_hWnd;
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = 260 * 2;
+	ofn.lpstrFilter = "Model\0*.DAE;*.FBX;*.OBJ\0";
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = szFileTitle;
+	ofn.nMaxFileTitle = 260 * 2;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+
+	char* a = nullptr;
+	if (GetOpenFileNameA(&ofn) == TRUE)
+	{
+		//Display the selected file. 
+		return ofn.lpstrFile;
+
+	}
+
+	return a;
 }

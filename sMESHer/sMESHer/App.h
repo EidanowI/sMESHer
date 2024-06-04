@@ -20,6 +20,8 @@ public:
 private:
 	static int MainLoop() noexcept {
 		Renderer::SetCamera();
+
+		Scene::InitLight();
 		while (!m_isShouldCloseWindowAndCreateNew) {
 			const std::optional<int> proc = AppWindow::ProcessMessage();
 			if (proc.has_value()) return proc.value();
@@ -32,10 +34,12 @@ private:
 
 			ImGUIManager::ShowMenuBar();
 			ImGUIManager::ShowModelViewer();
+			ImGUIManager::ShowLightEditor();
 
 			Renderer::s_pCamera->UpdateFpsRotation();
 			Renderer::s_pCamera->Bind();
 
+			Scene::UpdateLight();
 			Scene::Render();
 
 			//ImGUIManager::Render();
@@ -45,6 +49,7 @@ private:
 			Renderer::PresentRenderTargets();
 			InputSystem::UpdateInput();
 		}
+		Scene::TerminateLight();
 
 		return TYLER_DURDEN;
 	}

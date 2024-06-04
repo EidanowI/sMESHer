@@ -13,7 +13,7 @@
 #include <DirectXMath.h>
 
 class Renderer {
-	//friend class Mesh;
+	friend class Light;
 public:
 	struct AvailableAdapterDesc {
 		char name[64]{};

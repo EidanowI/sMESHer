@@ -1,6 +1,7 @@
 #pragma once
 #include "../Mesh/Model.h"
 #include <vector>
+#include "../Light/Light.h"
 
 
 
@@ -8,25 +9,25 @@
 
 class Scene {
 public:
-	static void qsortRecursive(Model** array, int size);
+	static void QsortRecursive(Model** array, int size);
+	static int InterpolateSearch(int searchLength) noexcept;
 
+	static void Render() noexcept;
 
-	static void OnChangeGPU() noexcept;
-	static void Clear() noexcept {
-		m_models.clear();
-	}
-	static void Render() noexcept {
-		for (int i = 0; i < m_models.size(); i++) {
-			m_models[i]->Draw();
-		}
-	}
-	static void AddModel(const char* path) noexcept;
+	static void Clear() noexcept;
 	static void RecreateNames() noexcept;
 
 	static void SortModels() noexcept;
+	static void BinarySearchModels(char* searchName, int length) noexcept;
+
+	static void UpdateLight() noexcept;
+	static void InitLight() noexcept;
+	static void TerminateLight() noexcept;
 
 	static std::vector<Model*> m_models;
 	static std::vector<const char*> m_namesCstr;
 	static int m_selectedModelIndex;
+
+	static Light* s_pLight;
 };
 

@@ -3,6 +3,44 @@
 
 
 
+Model::Model(const std::string& path) noexcept {
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(path, aiProcess_FlipUVs | aiProcess_Triangulate);
+	if (scene == nullptr ||
+		scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
+		!scene->mRootNode) {
+#ifdef  IS_DEBUG
+		///TODO Loging
+		__ERROR(L"Unable to load model", __FILE__);
+		std::ofstream ofs;
+		ofs.open("Logs/Log.txt");
+		ofs.write(importer.GetErrorString(), 256);
+		ofs.close();
+#endif //
+		assert(false);
+		return;
+	}
+	//m_meshes = std::vector<char*>();
+	m_vertexShaderIndex = ShaderSystem::GetVertexShaderIndex("VertexSh", "Shaders/");
+	m_pixelShaderIndex = ShaderSystem::GetPixelShaderIndex("LampShad", "Shaders/");
+
+	m_pMeshe = LoadOne(scene->mRootNode, scene);
+
+	m_position = GraphicsFundament::Vector3D(0.0f, 0.0f, 0.0f);
+	m_rotation = GraphicsFundament::Vector3D(0.0f, 0.0f, 0.0f);
+	m_scale = GraphicsFundament::Vector3D(1.0f, 1.0f, 1.0f);
+	m_vertConstBuf1Struct.modelMatrix = m_transform;
+	m_vertConstBuf1Struct.normalMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_transform));
+	m_vertConstBuf1Struct.color[0] = 1.0f;
+	m_vertConstBuf1Struct.color[1] = 1.0f;
+	m_vertConstBuf1Struct.color[2] = 0.0f;
+	m_vertConstBuf1Struct.color[3] = 1.0f;
+	m_pVertConstBuf1 = Renderer::CreateConstBuffer((char*)&m_vertConstBuf1Struct, sizeof(ShaderSystem::TestVert_CBuf1));
+
+	UpdateTransform();
+
+
+}
 Model::Model(Mesh* pMesh) noexcept{
 	m_vertexShaderIndex = ShaderSystem::GetVertexShaderIndex("VertexSh", "Shaders/");
 	m_pixelShaderIndex = ShaderSystem::GetPixelShaderIndex("PixelSha", "Shaders/");
@@ -55,6 +93,14 @@ void Model::LoadNode(const aiNode* node, const aiScene* scene) {
 		LoadNode(node->mChildren[i], scene);
 	}
 }
+Mesh* Model::LoadOne(const aiNode* node, const aiScene* scene) {
+	// process all the node's meshes (if any)
+
+		aiMesh* mesh = scene->mMeshes[0];
+		return LoadMesh(mesh, scene);
+
+}
+
 Mesh* Model::LoadMesh(const aiMesh* mesh, const aiScene* scene) {
 	unsigned int verticiesNums = mesh->mNumVertices;
 	Mesh::Vertex48B* verticies = new Mesh::Vertex48B[verticiesNums];
@@ -117,7 +163,7 @@ void Model::UpdateConstBuffer() noexcept {
 
 void Model::LoadIntoScene() noexcept {
 	char* a = ImGUIManager::ReadFileName();
-
+	if (a == nullptr) return;
 	Assimp::Importer importer;
 	const aiScene* sceneee = importer.ReadFile(a, aiProcess_FlipUVs | aiProcess_Triangulate);
 	if (sceneee == nullptr ||
@@ -131,26 +177,4 @@ void Model::LoadIntoScene() noexcept {
 	m.LoadNode(sceneee->mRootNode, sceneee);
 
 	Scene::RecreateNames();
-}
-
-void Model::RecreateAfterChangingGPU() noexcept {
-	if (m_pVertConstBuf1 != nullptr) {
-		m_pVertConstBuf1->Release();
-		m_pVertConstBuf1 = nullptr;
-	}
-
-	m_pVertConstBuf1 = Renderer::CreateConstBuffer((char*)&m_vertConstBuf1Struct, sizeof(ShaderSystem::TestVert_CBuf1));
-
-	Mesh* newMesh = new Mesh(
-		m_pMeshe->m_pSourceVerticies,
-		m_pMeshe->m_sourceVerticiesNum,
-		m_pMeshe->m_pSourceIndecies,
-		m_pMeshe->m_sourceIndeciesNum,
-		m_vertexShaderIndex
-	);
-	m_pMeshe->m_pSourceVerticies = nullptr;
-	m_pMeshe->m_pSourceIndecies = nullptr;
-	delete m_pMeshe;
-
-	m_pMeshe = newMesh;
 }
