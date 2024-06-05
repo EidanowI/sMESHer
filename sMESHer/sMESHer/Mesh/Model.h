@@ -29,7 +29,7 @@ public:
 
 	void LoadIntoScene() noexcept;
 
-private:
+public:
 	Mesh* LoadOne(const aiNode* node, const aiScene* scene);
 	void LoadNode(const aiNode* node, const aiScene* scene);
 	Mesh* LoadMesh(const aiMesh* mesh, const aiScene* scene);

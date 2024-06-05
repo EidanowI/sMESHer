@@ -431,12 +431,6 @@
     <None Include="Dependencies\assimp\include\assimp\vector3.inl" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\LampShad.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)sMESHer\Shaders\%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)sMESHer\Shaders\%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
     <FxCompile Include="Shaders\PixelSha.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

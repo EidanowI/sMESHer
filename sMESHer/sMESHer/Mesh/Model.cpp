@@ -5,7 +5,7 @@
 
 Model::Model(const std::string& path) noexcept {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_FlipUVs | aiProcess_Triangulate);
+	const aiScene* scene = importer.ReadFile(path, aiProcess_FlipUVs | aiProcess_Triangulate | aiProcess_GenNormals);
 	if (scene == nullptr ||
 		scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
 		!scene->mRootNode) {
@@ -165,7 +165,7 @@ void Model::LoadIntoScene() noexcept {
 	char* a = ImGUIManager::ReadFileName();
 	if (a == nullptr) return;
 	Assimp::Importer importer;
-	const aiScene* sceneee = importer.ReadFile(a, aiProcess_FlipUVs | aiProcess_Triangulate);
+	const aiScene* sceneee = importer.ReadFile(a, aiProcess_FlipUVs | aiProcess_Triangulate | aiProcess_GenNormals);
 	if (sceneee == nullptr ||
 		sceneee->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
 		!sceneee->mRootNode) {

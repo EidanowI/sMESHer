@@ -872,6 +872,5 @@
   <ItemGroup>
     <FxCompile Include="Shaders\VertexSh.hlsl" />
     <FxCompile Include="Shaders\PixelSha.hlsl" />
-    <FxCompile Include="Shaders\LampShad.hlsl" />
   </ItemGroup>
 </Project>

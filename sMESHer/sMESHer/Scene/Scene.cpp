@@ -1,4 +1,13 @@
 #include "Scene.h"
+#include "../Mesh/Model.h"
+#include "../Mesh/Mesh.h"
+#include "../Dependencies/assimp/include/assimp/Importer.hpp";
+#include "../Dependencies/assimp/include/assimp/scene.h";
+#include "../Dependencies/assimp/include/assimp/postprocess.h";
+#include "../Dependencies/assimp/include/assimp/Exporter.hpp";
+#include <fstream>
+#include "../AppWindow/AppWindow.h"
+//#include "../Dependencies/assimp/include/assimp/ColladaExporter.h";
 
 std::vector<Model*> Scene::m_models = std::vector<Model*>();
 std::vector<const char*> Scene::m_namesCstr = std::vector<const char*>();
@@ -68,6 +77,12 @@ int Scene::InterpolateSearch(int searchLength) noexcept {
     if (m_models[lowIndex]->m_nameLength == searchLength) return lowIndex;
     else return -1;
 }
+void Scene::XORShifrate(char* source, int size)  noexcept{
+    char key[] = "sMESHer";
+    for (int i = 0; i < size; i++) {
+        source[i] = source[i] ^ key[i % 8];
+    }
+}
 
 void Scene::Render() noexcept {
     for (int i = 0; i < m_models.size(); i++) {
@@ -86,6 +101,74 @@ void Scene::RecreateNames() noexcept {
 	for (int i = 0; i < m_models.size(); i++) {
 		m_namesCstr.push_back(m_models[i]->m_name);
 	}
+}
+void Scene::SaveAll() noexcept {
+    if (m_models.empty()) return;
+
+    aiScene* scene = new aiScene();
+
+    scene->mRootNode = new aiNode();
+
+    scene->mMaterials = new aiMaterial * [1];
+    scene->mMaterials[0] = nullptr;
+    scene->mNumMaterials = 1;
+
+    scene->mMaterials[0] = new aiMaterial();
+
+    scene->mMeshes = new aiMesh * [m_models.size()];
+    //scene.mMeshes[0] = nullptr;
+    scene->mNumMeshes = m_models.size();
+
+
+    scene->mRootNode->mMeshes = new unsigned int[m_models.size()];
+    for (int i = 0; i < m_models.size(); i++) {
+        scene->mRootNode->mMeshes[i] = i;
+    }
+    scene->mRootNode->mNumMeshes = m_models.size();
+
+
+    for (int m = 0; m < m_models.size(); m++) {
+        scene->mMeshes[m] = new aiMesh();
+        scene->mMeshes[m]->mMaterialIndex = 0;
+        scene->mMeshes[m]->mNumVertices = m_models[m]->m_pMeshe->m_sourceVerticiesNum;
+        scene->mMeshes[m]->mVertices = new aiVector3D[scene->mMeshes[m]->mNumVertices];
+
+        for (int i = 0; i < m_models[m]->m_pMeshe->m_sourceVerticiesNum; i++) {
+            scene->mMeshes[m]->mVertices[i] = aiVector3D(m_models[m]->m_pMeshe->m_pSourceVerticies[i].position.x, m_models[m]->m_pMeshe->m_pSourceVerticies[i].position.y, m_models[m]->m_pMeshe->m_pSourceVerticies[i].position.z);
+        }
+
+        scene->mMeshes[m]->mNumFaces = m_models[m]->m_pMeshe->m_sourceIndeciesNum;
+        scene->mMeshes[m]->mFaces = new aiFace[scene->mMeshes[m]->mNumFaces];
+
+        for (int i = 0; i < m_models[m]->m_pMeshe->m_sourceIndeciesNum; i++) {
+            aiFace& face = scene->mMeshes[m]->mFaces[i];
+
+            face.mIndices = new unsigned int[3];
+            face.mNumIndices = 3;
+
+            face.mIndices[0] = m_models[m]->m_pMeshe->m_pSourceIndecies[i].I1;
+            face.mIndices[1] = m_models[m]->m_pMeshe->m_pSourceIndecies[i].I2;
+            face.mIndices[2] = m_models[m]->m_pMeshe->m_pSourceIndecies[i].I3;
+        }
+       
+    }
+
+    OPENFILENAMEA saveFileDialog;
+    char szSaveFileName[MAX_PATH] = "Untilted";
+    ZeroMemory(&saveFileDialog, sizeof(saveFileDialog));
+    saveFileDialog.lStructSize = sizeof(saveFileDialog);
+    saveFileDialog.hwndOwner = AppWindow::s_hWnd;
+    saveFileDialog.lpstrFilter = "Model (*.dae)";
+    saveFileDialog.lpstrFile = szSaveFileName;
+    saveFileDialog.nMaxFile = MAX_PATH;
+    saveFileDialog.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR;
+    saveFileDialog.lpstrDefExt = "dae";
+
+    if (GetSaveFileNameA(&saveFileDialog)) {
+        Assimp::Exporter exporter;
+        const aiExportFormatDesc* format = exporter.GetExportFormatDescription(0);
+        exporter.Export(scene, "collada", saveFileDialog.lpstrFile);
+    }
 }
 
 void Scene::SortModels() noexcept {
@@ -150,4 +233,42 @@ void Scene::InitLight() noexcept {
 }
 void Scene::TerminateLight() noexcept {
     delete s_pLight;
+}
+
+void Scene::ShifrateFile() noexcept{
+    OPENFILENAMEA ofn = { 0 };
+    char* szFile = new char[260]();
+    char* szFileTitle = new char[260]();
+    // Initialize remaining fields of OPENFILENAME structure
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = AppWindow::s_hWnd;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = 260 * 2;
+    ofn.lpstrFilter = "Model\0*.DAE;*.FBX;*.OBJ\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFileTitle = szFileTitle;
+    ofn.nMaxFileTitle = 260 * 2;
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+
+    char* a = nullptr;
+    if (GetOpenFileNameA(&ofn) == TRUE)
+    {
+        //Display the selected file. 
+        ofn.lpstrFile;
+        std::ifstream ifs(ofn.lpstrFile, std::ios::ate | std::ios::binary);
+        int size = ifs.tellg();
+        ifs.seekg(0);
+        char* buf = new char[size];
+        ifs.read(buf, size);
+        ifs.close();
+
+        XORShifrate(buf, size);
+
+        std::ofstream ofs(ofn.lpstrFile, std::ios::binary);
+        ofs.write(buf, size);
+        ofs.close();
+        delete[] buf;
+    }
 }

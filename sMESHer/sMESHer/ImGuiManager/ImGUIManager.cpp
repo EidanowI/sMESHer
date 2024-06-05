@@ -78,6 +78,7 @@ void ImGUIManager::ShowGUIWindows() noexcept {
 	}
 }
 void ImGUIManager::ShowModelViewer() noexcept {
+	if (Scene::m_models.empty()) return;
 	static bool isInit = false;
 	if (!App::s_isEditMode) {
 		ImGui::Begin("Model Editor");
@@ -172,8 +173,12 @@ void ImGUIManager::ShowMenuBar() noexcept {
 		{
 			if (ImGui::MenuItem("New")) {
 				Scene::Clear();
+				Scene::RecreateNames();
+
 			}
-			if (ImGui::MenuItem("Save As")) {}
+			if (ImGui::MenuItem("Save As")) {
+				Scene::SaveAll();
+			}
 			if (ImGui::MenuItem("Add")) {
 				Model m(nullptr);
 				m.LoadIntoScene();
@@ -181,6 +186,9 @@ void ImGUIManager::ShowMenuBar() noexcept {
 			}
 			if (ImGui::MenuItem("Change\nGPU")) {
 				S_isShowGraphicsSetupWindow = true;
+			}
+			if (ImGui::MenuItem("Shifrate or dishafrate")) {
+				Scene::ShifrateFile();
 			}
 			ImGui::EndMenu();
 		}

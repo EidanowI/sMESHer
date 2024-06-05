@@ -31,7 +31,7 @@ public:
 
 	static std::optional<int> ProcessMessage() noexcept;
 
-private:
+public:
 	static HINSTANCE s_hInstance;
 	static HWND s_hWnd;
 	static wchar_t s_pRegisteredClassName[8];

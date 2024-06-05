@@ -26,7 +26,7 @@ public:
 	void Bind() noexcept;
 	void Draw() noexcept;
 
-private:
+public:
 
 	ID3D11Buffer* m_pVertexBuffer;
 	ID3D11Buffer* m_pIndexBuffer;
